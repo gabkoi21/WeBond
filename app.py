@@ -3,15 +3,12 @@ from flask_smorest import Api
 from flask_migrate import Migrate
 import os
 import models
-# from flask_jwt_extended import JWTManager
 
 
 # These are the file from the resourescs folder
 from db import db
-from resources.event import blp as EventBlueprint
-from resources.ticket import blp as TicketBlueprint
-
-
+# from resources.posts import blp as PostsBluprint
+from resources.user import blp as UsersBlueprint
 
 def create_app(db_url=None):
     app = Flask(__name__)
@@ -24,19 +21,17 @@ def create_app(db_url=None):
     app.config[
         "OPENAPI_SWAGGER_UI_URL"
     ] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_url or "sqlite:///dataBase.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_url or "sqlite:///database.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["PROPAGATE_EXCEPTIONS"] = True
     db.init_app(app)
-    migrate = Migrate(app, db)
+    Migrate(app, db)
     api = Api(app)
     
-    # app.config["JWT_SECRET_KEY"] = "jose"
-    # jwt = JWTManager(app)
 
     with app.app_context():
         db.create_all()
 
-    api.register_blueprint(EventBlueprint)
-    api.register_blueprint(TicketBlueprint)
+    api.register_blueprint(UsersBlueprint)
+    
     return app
